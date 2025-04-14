@@ -206,12 +206,37 @@ bool ParseHtml(const std::vector<std::string> &files_list, std::vector<DocInfo_t
         // break;
 
         // done,一定是完成了解析任务，当前文档的相关结果都保存在了doc里面
-        results->push_back(std::move(doc)); // bug:todo;细节，本质会发生拷贝，效率可能会比较低
+        results->push_back(std::move(doc)); // 细节，本质会发生拷贝，效率可能会比较低
     }
     return true;
 }
 
 bool SaveHtml(const std::vector<DocInfo_t> &results, const std::string &output)
 {
+#define SEP '\3'
+
+    // 按照二进制方式进行写入
+    std::ofstream out(output, std::ios::out | std::ios::binary);
+    if (!out.is_open())
+    {
+        std::cerr << "open " << output << " failed!" << std::endl;
+        return false;
+    }
+
+    // 就可以进行文件内容的写入了
+    for (auto &item : results)
+    {
+        std::string out_string;
+        out_string = item.title;
+        out_string += SEP;
+        out_string += item.content;
+        out_string += SEP;
+        out_string += item.url;
+        out_string += '\n';
+
+        out.write(out_string.c_str(), out_string.size());
+    }
+
+    out.close();
     return true;
 }
