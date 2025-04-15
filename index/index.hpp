@@ -126,7 +126,7 @@ namespace ns_index
             const std::string sep = "\3"; // 行内分隔符
 
             ns_util::StringUtil::Split(line, &results, sep);
-            
+
             // ns_util::StringUtil::CutString(line, &results, sep);
             if (results.size() != 3)
             {
@@ -145,9 +145,65 @@ namespace ns_index
 
             return &forward_index.back();
         }
-        bool BuildInvertedIndex(const DocInfo &doc)
+        bool BuildInvertedIndex(const DocInfo &doc) // TODO
         {
-            
+            // DocInfo{title, content, url, doc_id}
+            // word -> 倒排拉链
+            struct word_cnt
+            {
+                int title_cnt;
+                int content_cnt;
+
+                word_cnt() : title_cnt(0), content_cnt(0) {}
+            };
+            std::unordered_map<std::string, word_cnt> word_map; // 用来暂存词频的映射表
+
+            // 对标题进行分词
+            std::vector<std::string> title_words;
+            ns_util::JiebaUtil::CutString(doc.title, &title_words);
+
+            // if(doc.doc_id == 1572){
+            //     for(auto &s : title_words){
+            //         std::cout << "title: " << s << std::endl;
+            //     }
+            // }
+
+            // 对标题进行词频统计
+            for (std::string s : title_words)
+            {
+                boost::to_lower(s);      // 需要统一转化成为小写
+                word_map[s].title_cnt++; // 如果存在就获取，如果不存在就新建
+            }
+
+            // 对文档内容进行分词
+            std::vector<std::string> content_words;
+            ns_util::JiebaUtil::CutString(doc.content, &content_words);
+            // if(doc.doc_id == 1572){
+            //     for(auto &s : content_words){
+            //         std::cout << "content: " << s << std::endl;
+            //     }
+            // }
+
+            // 对内容进行词频统计
+            for (std::string s : content_words)
+            {
+                boost::to_lower(s);
+                word_map[s].content_cnt++;
+            }
+
+#define X 10
+#define Y 1
+            // Hello,hello,HELLO
+            for (auto &word_pair : word_map)
+            {
+                InvertedElem item;
+                item.doc_id = doc.doc_id;
+                item.word = word_pair.first;
+                item.weight = X * word_pair.second.title_cnt + Y * word_pair.second.content_cnt; // 相关性
+                InvertedList &inverted_list = inverted_index[word_pair.first];
+                inverted_list.push_back(std::move(item));
+            }
+
             return true;
         }
 
