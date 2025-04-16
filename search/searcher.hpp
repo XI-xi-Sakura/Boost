@@ -124,8 +124,17 @@ namespace ns_searcher
             const int next_step = 100;
 
             // 1. 找到首次出现
+
+            // size_t iter_test = html_content.find(word);
+
+            // 首先，find（word）中的word为已经小写化的字符串，而我们需要无视大小写字符串的比较去搜索关键字
+
+            // 其次，c++中size_t为无符号整数，做减法可能会变成一个很大的正数(运算结果仍为无符号整数)
+
             auto iter = std::search(html_content.begin(), html_content.end(), word.begin(), word.end(), [](int x, int y)
                                     { return (std::tolower(x) == std::tolower(y)); });
+            // std::search 函数是一个算法，定义于 <algorithm> 头文件中，用于在一个范围里查找另一个子序列首次出现的位置。详见官方文档
+            // 如果找到了子序列，就返回指向该子序列首次出现位置的迭代器；如果没找到，就返回 last。
             if (iter == html_content.end())
             {
                 return "None1";
@@ -146,7 +155,7 @@ namespace ns_searcher
                 return "None2";
             std::string desc = html_content.substr(start, end - start);
             desc += "...";
-            
+
             return desc;
         }
     };
