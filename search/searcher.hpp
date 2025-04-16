@@ -118,9 +118,11 @@ namespace ns_searcher
         std::string GetDesc(const std::string &html_content, const std::string &word)
         {
             // 找到word在html_content中的首次出现，然后往前找50字节(如果没有，从begin开始)，往后找100字节(如果没有，到end就可以的)
+
             // 截取出这部分内容
             const int prev_step = 50;
             const int next_step = 100;
+
             // 1. 找到首次出现
             auto iter = std::search(html_content.begin(), html_content.end(), word.begin(), word.end(), [](int x, int y)
                                     { return (std::tolower(x) == std::tolower(y)); });
@@ -144,6 +146,7 @@ namespace ns_searcher
                 return "None2";
             std::string desc = html_content.substr(start, end - start);
             desc += "...";
+            
             return desc;
         }
     };
