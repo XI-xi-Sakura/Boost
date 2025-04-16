@@ -42,7 +42,7 @@ namespace ns_index
         Index &operator=(const Index &) = delete;
 
     public:
-        ~Index() {} // TODO
+        ~Index() {} // 设置为单例模式
 
     public:
         static Index *GetInstance()
@@ -107,10 +107,10 @@ namespace ns_index
                 BuildInvertedIndex(*doc);
 
                 count++;
-                // if(count % 50 == 0){
+                if(count % 50 == 0){
                 // std::cout <<"当前已经建立的索引文档: " << count <<std::endl;
                 LOG(NORMAL, "当前的已经建立的索引文档: " + std::to_string(count));
-                //}
+                }
             }
             return true;
         }
@@ -145,7 +145,8 @@ namespace ns_index
 
             return &forward_index.back();
         }
-        bool BuildInvertedIndex(const DocInfo &doc) // TODO
+        // 倒排索引的构建
+        bool BuildInvertedIndex(const DocInfo &doc) 
         {
             // DocInfo{title, content, url, doc_id}
             // word -> 倒排拉链
@@ -194,13 +195,14 @@ namespace ns_index
 #define X 10
 #define Y 1
             // Hello,hello,HELLO
-            for (auto &word_pair : word_map)
+            for (auto &word_pair : word_map) // std::unordered_map<std::string, word_cnt> word_map;
             {
                 InvertedElem item;
                 item.doc_id = doc.doc_id;
                 item.word = word_pair.first;
                 item.weight = X * word_pair.second.title_cnt + Y * word_pair.second.content_cnt; // 相关性
-                InvertedList &inverted_list = inverted_index[word_pair.first];
+
+                InvertedList &inverted_list = inverted_index[word_pair.first]; //  typedef std::vector<InvertedElem> InvertedList;
                 inverted_list.push_back(std::move(item));
             }
 
@@ -215,6 +217,10 @@ namespace ns_index
         std::unordered_map<std::string, InvertedList> inverted_index;
 
         static Index *instance;
+
         static std::mutex mtx;
     };
+
+    Index *Index::instance = nullptr;
+    std::mutex Index::mtx;
 }
