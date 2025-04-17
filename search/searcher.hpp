@@ -63,7 +63,8 @@ namespace ns_searcher
                 {
                     continue;
                 }
-                // 不完美的地方，重复性问题
+
+                // 不完美的地方，文档搜索重复性问题
                 // inverted_list_all.insert(inverted_list_all.end(), inverted_list->begin(), inverted_list->end());
                 for (const auto &elem : *inverted_list)
                 {
@@ -85,6 +86,7 @@ namespace ns_searcher
                 //      [](const ns_index::InvertedElem &e1, const ns_index::InvertedElem &e2){
             //         return e1.weight > e2.weight;
             //         });
+
             std::sort(inverted_list_all.begin(), inverted_list_all.end(),
                       [](const InvertedElemPrint &e1, const InvertedElemPrint &e2)
                       {
