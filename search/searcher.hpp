@@ -63,7 +63,7 @@ namespace ns_searcher
                 {
                     continue;
                 }
-                // 不完美的地方：暂时可以交给大家 , 你/是/一个/好人 100
+                // 不完美的地方，重复性问题
                 // inverted_list_all.insert(inverted_list_all.end(), inverted_list->begin(), inverted_list->end());
                 for (const auto &elem : *inverted_list)
                 {
